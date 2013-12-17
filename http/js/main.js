@@ -11,15 +11,23 @@ function random_word() {
 }
 
 
-function get_sense(word) {
-    var sense = '';
+function get_def(word) {
+    var def = '';
 
-    for (var j = 0; j < word.sense.length; j++) {
-        if (j) sense += '<br/>';
-        sense += word.sense[j];
+    for (var i = 0; i < word.def.length; i++) {
+        def += '<li>';
+
+        senses = word.def[i];
+
+        for (var j = 0; j < senses.length; j++) {
+            if (j) def += '<br/>';
+            def += senses[j];
+        }
+
+        def += '</li>';
     }
 
-    return sense;
+    return '<ol>' + def + '</ol>';
 }
 
 
@@ -47,7 +55,7 @@ function update_word(word) {
     $('#date')
         .html($('<a>').attr({href: url, target: '_blank'}).text(word.date))
 
-    $('#sense').html('<h3>Definitions</h3>' + get_sense(word));
+    $('#def').html('<h3>Definitions</h3>' + get_def(word));
     $('#examples').html('<h3>Examples</h3>' + word.examples);
     $('#etymology').html('<h3>Did you know?</h3>' + word.etymology);
     $('#content a').attr('target', '_blank');
@@ -68,6 +76,7 @@ function show_word() {
 function choice_correct() {
     correct++;
     $.cookie('wotd_correct', correct);
+    $('#button').off();
     update_score();
     play_audio('success.wav');
 
@@ -78,10 +87,11 @@ function choice_correct() {
 function choice_incorrect(correct, choice) {
     incorrect++;
     $.cookie('wotd_incorrect', incorrect);
+    $('#button').off();
     update_score();
     play_audio('fail.wav');
 
-    var choices = $('#choices li');
+    var choices = $('#choices li.choice');
 
     if (typeof choice != 'undefined')
         $(choices[choice]).css('background', '#faa');
@@ -139,18 +149,15 @@ function choose_word() {
         if (ok) words.push(option);
     }
 
-    var senseOrExamples = Math.random() < 0.5;
     var choices = $('#choices').html('');
     for (var i = 0; i < words.length; i++) {
         var re = new RegExp(words[i].word, 'gi');
 
-        var content;
-        if (senseOrExamples) content = get_sense(words[i]);
-        else content = words[i].examples;
-
+        var content = get_def(words[i]);
         content = content.replace(re, '<b>' + current.word + '</b>');
 
         $('<li>')
+            .addClass('choice')
             .html(content)
             .click(i == pos ? choice_correct : function (i) {
                 return function () {choice_incorrect(pos, i);}
@@ -181,6 +188,8 @@ function cookie_number(name) {
 $(function () {
     correct = cookie_number('wotd_correct');
     incorrect = cookie_number('wotd_incorrect');
+
+    $('#button').text('Loading...');
 
     $.getJSON('wotd.json', null, process_wotd);
 });

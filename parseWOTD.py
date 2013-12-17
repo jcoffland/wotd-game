@@ -17,7 +17,8 @@ audio_path = "//a[contains(@href, 'audio.php')]"
 audio_re = re.compile(r'audio\.php\?file=([^&]*)\&')
 pron_sel = CSSSelector('.pron')
 func_sel = CSSSelector('.word_function')
-sens_sel = CSSSelector('.ssens')
+def_sel = CSSSelector('.sblk,.sense-block-one')
+sense_sel = CSSSelector('.ssens')
 examples_sel = CSSSelector('.word_example_didu')
 examples_path = "//*[contains(@class, 'word_example_didu')]"
 etymology_path = \
@@ -29,7 +30,7 @@ def date_range(start, end):
 
 
 def elem_to_string(e):
-    return ''.join(map(ElementTree.tostring, e))
+    return ''.join(map(ElementTree.tostring, e)).strip()
 
 
 entries = []
@@ -57,7 +58,21 @@ for day in date_range(start, end):
 
     data['pron'] = pron_sel(html)[0].text
     data['func'] = func_sel(html)[0].text
-    data['sense'] = map(elem_to_string, sens_sel(html))
+
+    data['def'] = []
+    for d in def_sel(html):
+        senses = []
+
+        for s in sense_sel(d):
+            text = elem_to_string(s)
+            if text: senses.append(text)
+            elif s.text.strip(): senses.append(s.text.strip())
+
+        if len(senses): data['def'].append(senses)
+
+    if not len(data['def']):
+        print 'Skipping, no def'
+        continue
 
     examples = examples_sel(html)
 
