@@ -76,7 +76,7 @@ function show_word() {
 function choice_correct() {
     correct++;
     $.cookie('wotd_correct', correct);
-    $('#button').off();
+    $('#button,.choice').off();
     update_score();
     play_audio('success.wav');
 
@@ -87,7 +87,7 @@ function choice_correct() {
 function choice_incorrect(correct, choice) {
     incorrect++;
     $.cookie('wotd_incorrect', incorrect);
-    $('#button').off();
+    $('#button,.choice').off();
     update_score();
     play_audio('fail.wav');
 
