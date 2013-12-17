@@ -57,7 +57,7 @@ for day in date_range(start, end):
     except: pass
 
     data['pron'] = pron_sel(html)[0].text.strip()
-    data['func'] = func_sel(html)[0].text.strip()
+    data['func'] = ''.join(func_sel(html)[0].itertext()).strip()
 
     data['def'] = []
     for d in def_sel(html):
