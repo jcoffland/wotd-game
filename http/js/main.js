@@ -131,6 +131,12 @@ function choose_word() {
 
     var pos = Math.floor(Math.random() * 5);
 
+    var func;
+    if (current.func.indexOf('noun') != -1) func = 'noun';
+    else if (current.func.indexOf('adjective') != -1) func = 'adjective';
+    else if (current.func.indexOf('adverb') != -1) func = 'adverb';
+    else if (current.func.indexOf('verb') != -1) func = 'verb';
+
     words = [];
     while (words.length < 5) {
         if (words.length == pos) {
@@ -139,7 +145,8 @@ function choose_word() {
         }
 
         option = random_word();
-        if (option.word == current.word || option.func != current.func)
+        if (option.word == current.word) continue;
+        if (typeof func != 'undefined' && option.func.indexOf(func) == -1)
             continue;
 
         var ok = true;
