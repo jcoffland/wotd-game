@@ -40,7 +40,7 @@ for day in date_range(start, end):
 
     if not os.path.exists(filename): continue
 
-    #print 'Processing', filename
+    print 'Processing', filename
 
     parser = etree.HTMLParser(recover = True, remove_comments = True)
     html = etree.parse(open(filename, 'r'), parser).getroot()
@@ -58,8 +58,6 @@ for day in date_range(start, end):
 
     data['pron'] = pron_sel(html)[0].text.strip()
     data['func'] = func_sel(html)[0].text.strip()
-
-    print 'func="%s"' % data['func']
 
     data['def'] = []
     for d in def_sel(html):
