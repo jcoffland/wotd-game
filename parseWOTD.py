@@ -30,7 +30,8 @@ def date_range(start, end):
 
 
 def elem_to_string(e):
-    return ''.join(map(ElementTree.tostring, e)).strip()
+    s = e.text if e.text is not None else ''
+    return s + ''.join(map(ElementTree.tostring, e))
 
 
 entries = []
@@ -64,9 +65,8 @@ for day in date_range(start, end):
         senses = []
 
         for s in sense_sel(d):
-            text = elem_to_string(s)
+            text = elem_to_string(s).strip()
             if text: senses.append(text)
-            elif s.text.strip(): senses.append(s.text.strip())
 
         if len(senses): data['def'].append(senses)
 
